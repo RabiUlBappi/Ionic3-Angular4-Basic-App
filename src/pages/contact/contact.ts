@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { AddContactPage } from '../add-contact/add-contact';
+import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 
 @Component({
   selector: 'page-contact',
@@ -7,8 +9,30 @@ import { NavController } from 'ionic-angular';
 })
 export class ContactPage {
 
-  constructor(public navCtrl: NavController) {
+  contactList: FirebaseListObservable<any>;
+ 
+  constructor(public navCtrl: NavController, public afDb: AngularFireDatabase) {
+    this.contactList = afDb.list('/contacts');
+  }
 
+  addContact(){
+    this.navCtrl.push(AddContactPage);
+  }
+
+  editContact(contact){
+  this.navCtrl.push(AddContactPage, {
+      key: contact.$key,
+      name: contact.name,
+      address: contact.address,
+      phone: contact.phone,
+      city: contact.city
+    });
+  }
+
+  deleteContact(contact) {
+    this.contactList.remove(contact);
   }
 
 }
+
+
